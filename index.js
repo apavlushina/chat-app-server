@@ -17,21 +17,62 @@ app.get("/", (req, res, next) => {
 
 const stream = new Sse();
 
+const streams = {};
+
 app.get("/stream", (req, res, next) => {
-  const string = JSON.stringify(messages);
+  const rooms = Object.keys(messages);
+  const string = JSON.stringify(rooms);
   stream.updateInit(string);
   stream.init(req, res);
 });
 
-const messages = [];
+app.get("/room/;roomName", (req, res, next) => {
+  const { roomName } = req.params;
 
-app.post("/message", (req, res, next) => {
+  const stream = streams[roomName];
+
+  const data = messages[roomName];
+
+  const string = JSON.stringify(data);
+  stream.updateInit(string);
+  stream.init(req, res);
+});
+
+function send(data) {
+  const string = JSON.stringify(data);
+  stream.send(string);
+}
+
+app.post("/room", (req, res, next) => {
+  const { name } = req.body;
+  messages[name] = [];
+  rooms.push(name);
+  send(message);
+
+  res.send(name);
+});
+
+// app.get("/stream", (req, res, next) => {
+//   const string = JSON.stringify(messages);
+//   stream.updateInit(string);
+//   stream.init(req, res);
+// });
+
+const messages = {};
+
+app.post("/message/:roomName", (req, res, next) => {
   const { message } = req.body;
+  const { roomName } = req.params;
 
+  const room = messages[roomName];
+
+  const stream = stream[roomName];
   const string = JSON.stringify(message);
   stream.send(string);
+  streams[name] = new Sse();
 
-  messages.push(message);
+  room.push(message);
+
   res.send(message);
 });
 
