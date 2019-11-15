@@ -26,7 +26,7 @@ app.get("/stream", (req, res, next) => {
   stream.init(req, res);
 });
 
-app.get("/room/;roomName", (req, res, next) => {
+app.get("/streams/:roomName", (req, res, next) => {
   const { roomName } = req.params;
 
   const stream = streams[roomName];
@@ -45,9 +45,9 @@ function send(data) {
 
 app.post("/room", (req, res, next) => {
   const { name } = req.body;
+  send(name);
   messages[name] = [];
-  rooms.push(name);
-  send(message);
+  streams[name] = new Sse();
 
   res.send(name);
 });
@@ -65,14 +65,10 @@ app.post("/message/:roomName", (req, res, next) => {
   const { roomName } = req.params;
 
   const room = messages[roomName];
-
+  room.push(message);
   const stream = stream[roomName];
   const string = JSON.stringify(message);
   stream.send(string);
-  streams[name] = new Sse();
-
-  room.push(message);
-
   res.send(message);
 });
 
