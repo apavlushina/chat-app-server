@@ -2,10 +2,14 @@ const express = require("express");
 const bodyParse = require("body-parser");
 const jsonParser = bodyParse.json();
 const Sse = require("json-sse");
+const cors = require("cors");
 const app = express();
 app.use(jsonParser);
 
 const port = 4000;
+
+const corsMiddleware = cors();
+app.use(corsMiddleware);
 
 app.get("/", (req, res, next) => {
   res.send("Hello");
