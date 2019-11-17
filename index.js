@@ -66,7 +66,7 @@ app.post("/message/:roomName", (req, res, next) => {
 
   const room = messages[roomName];
   room.push(message);
-  const stream = stream[roomName];
+  const stream = streams[roomName];
   const string = JSON.stringify(message);
   stream.send(string);
   res.send(message);
